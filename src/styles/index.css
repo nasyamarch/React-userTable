@@ -38,6 +38,7 @@ table {
   width: 100%;
   border-collapse: collapse;
   border-color: black;
+  table-layout: fixed;
 }
 
 thead {
