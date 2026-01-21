@@ -7,10 +7,7 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
-  /*color-scheme: light dark;*/
   color: black;
-  /*background-color: rgba(128, 128, 128, 0.48);*/
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -43,9 +40,18 @@ table {
   border-color: black;
 }
 
+thead {
+  position: sticky;
+  top: 0;
+  background-color: #e2e0e0;
+  border: 1px solid black;
+  height: fit-content;
+}
+
 tr {
   display: table-row;
   vertical-align: inherit;
+  border: 1px solid black;
 }
 
 th,
@@ -54,6 +60,7 @@ td {
   padding: 0.5rem;
   text-align: left;
   vertical-align: top;
+  border: 1px solid black;
 }
 
 th {
@@ -66,4 +73,13 @@ tbody tr:nth-child(2n) {
 
 h1 {
   text-align: center;
+}
+
+.userTable__resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5px;
+  height: 100%;
+  cursor: col-resize;
 }

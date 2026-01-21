@@ -1,4 +1,8 @@
-import {useEffect, useState} from 'react'
+import { useEffect, useState } from 'react';
+import useResizableColumns from "./hooks/useResizableColumns.js";
+import TableHeader from "./components/TableHeader.jsx";
+import { userColumnItems } from "./components/userColumnItems.js";
+import TableRow from "./components/TableRow.jsx";
 
 function App() {
 
@@ -6,6 +10,8 @@ function App() {
   const [originalUsers, setOriginalUsers] = useState([]);
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
+
+  const {columnWidth, startResize} = useResizableColumns();
 
   const URL = "https://dummyjson.com/users";
 
@@ -77,45 +83,19 @@ function App() {
     <div className="userTable">
       <h1 className="userTable__title">User Table</h1>
       <table>
-        <thead>
-        <tr>
-          <th onClick={() => handleSort('lastName')}>
-            Last name {renderSortIcon('lastName')}
-          </th>
-          <th onClick={() => handleSort('firstName')}>
-            First name {renderSortIcon('firstName')}
-            </th>
-          <th onClick={() => handleSort('maidenName')}>
-            Middle name {renderSortIcon('maidenName')}
-          </th>
-          <th onClick={() => handleSort('age')}>
-            Age {renderSortIcon('age')}
-          </th>
-          <th onClick={() => handleSort('gender')}>
-            Gender {renderSortIcon('gender')}
-          </th>
-          <th onClick={() => handleSort('phone')}>
-            Phone {renderSortIcon('phone')}
-          </th>
-          <th>Email</th>
-          <th>Country</th>
-          <th>City</th>
-        </tr>
-        </thead>
-
+        <TableHeader
+          columns={userColumnItems}
+          columnWidth={columnWidth}
+          handleSort={handleSort}
+          renderSortIcon={renderSortIcon}
+          startResize={startResize}
+        />
         <tbody>
         {users.map((user) => (
-          <tr key={user.id}>
-            <td>{user.lastName}</td>
-            <td>{user.firstName}</td>
-            <td>{user.maidenName}</td>
-            <td>{user.age}</td>
-            <td>{user.gender}</td>
-            <td>{user.phone}</td>
-            <td>{user.email}</td>
-            <td>{user.address.country}</td>
-            <td>{user.address.city}</td>
-          </tr>
+          <TableRow
+          key={user.id}
+          user={user}
+          />
         ))}
         </tbody>
       </table>
