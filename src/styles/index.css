@@ -66,6 +66,7 @@ td {
 
 th {
   background: rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 tbody tr:nth-child(2n) {
@@ -83,4 +84,6 @@ h1 {
   width: 5px;
   height: 100%;
   cursor: col-resize;
+  touch-action: none;
+  /*background-color: red;*/
 }

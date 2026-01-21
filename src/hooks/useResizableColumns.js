@@ -1,6 +1,6 @@
-import {useState, useCallback} from "react";
+import {useState, useCallback, useRef} from "react";
 
-const startWidth = {
+const initialColumnWidth = {
   lastName: 150,
   firstName: 150,
   maidenName: 150,
@@ -13,35 +13,49 @@ const startWidth = {
 };
 
 const useResizableColumns = () => {
-  const [columnWidth, setColumnWidth] = useState(startWidth);
+  const [columnWidth, setColumnWidth] = useState(initialColumnWidth);
+
+  const resizeState = useRef({
+    startX: 0,
+    startWidth: 0,
+    columnKey: null,
+  })
 
   const startResize = useCallback((e, columnKey) => {
     e.preventDefault();
 
-    const startX = e.clientX;
-    const startWidth = columnWidth[columnKey];
-
-    const onMouseMove = (e) => {
-      const newWidth = startWidth + (e.clientX - startX);
-
-      setColumnWidth((prev) => ({
-        ...prev,
-        [columnKey]: Math.max(newWidth, 50)
-      }))
+    resizeState.current = {
+      startX: e.clientX,
+      startWidth: columnWidth[columnKey],
+      columnKey,
     }
 
-    const onMouseUp = () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-    }
+    e.currentTarget.setPointerCapture(e.pointerId);
+  }, [columnWidth])
 
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
-  }, [columnWidth]);
+  const onResize = useCallback((e) => {
+    const {startX, startWidth, columnKey} = resizeState.current;
+    if (!columnKey) return;
+
+    const newWidth = startWidth + (e.clientX - startX);
+
+    setColumnWidth((prev) => ({
+      ...prev,
+      [columnKey]: Math.max(newWidth, 50)
+    }))
+
+  }, [])
+
+  const endResize = useCallback((e) => {
+    resizeState.current.columnKey = null;
+    e.currentTarget.releasePointerCapture(e.pointerId);
+  }, [])
 
   return {
     columnWidth,
-    startWidth,
+    startResize,
+    onResize,
+    endResize,
   }
 }
 

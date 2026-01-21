@@ -4,6 +4,8 @@ const TableHeader = ({
                        handleSort,
                        renderSortIcon,
                        startResize,
+                       onResize,
+                       endResize,
                      }) => {
   return (
     <thead>
@@ -11,15 +13,31 @@ const TableHeader = ({
       {columns.map(({key, label, isSortable, isResizable}) => (
         <th
           key={key}
-          onClick={isSortable ? () => handleSort(key) : undefined}
           style={columnWidth?.[key] ? {width: columnWidth[key]} : undefined}
         >
+          <span
+          className="userTable__sort-label"
+          onClick={isSortable ? () => handleSort(key) : undefined}
+          >
           {label}
           {isSortable && renderSortIcon(key)}
+            </span>
+
           {isResizable && (
             <span
               className="userTable__resizer"
-              onMouseDown={(e) => startResize(e, key)}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+                startResize(e, key);
+              }}
+              onPointerMove={(e) => {
+                e.stopPropagation();
+                onResize(e);
+              }}
+              onPointerUp={(e) => {
+                e.stopPropagation();
+                endResize(e);
+              }}
             />
           )}
 

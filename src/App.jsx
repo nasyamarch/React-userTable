@@ -10,7 +10,13 @@ function App() {
 
   const { users, setUsers, originalUsers } = useUsers();
   const {sortField, sortOrder, handleSort} = useSort(users, setUsers, originalUsers);
-  const {columnWidth, startResize} = useResizableColumns();
+  const {
+    columnWidth,
+    startResize,
+    endResize,
+    onResize,
+  }
+    = useResizableColumns();
 
 
   return (
@@ -23,6 +29,8 @@ function App() {
           handleSort={handleSort}
           renderSortIcon={(field) => renderSortIcon(field, sortField, sortOrder)}
           startResize={startResize}
+          onResize={onResize}
+          endResize={endResize}
         />
         <tbody>
         {users.map((user) => (
