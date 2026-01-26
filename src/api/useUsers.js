@@ -25,6 +25,7 @@ const useUsers = () => {
       Object.keys(filters).length === 0;
 
     if (!isOnlyPageChanged) {
+      prevUsersRef.current = users;
       setLoading(true);
     }
 
@@ -51,7 +52,7 @@ const useUsers = () => {
       const response = await fetch(URL);
       const data = await response.json();
 
-      prevUsersRef.current = users;
+      // prevUsersRef.current = users;
 
       setUsers(data.users || []);
       setTotal(data.total || 0);

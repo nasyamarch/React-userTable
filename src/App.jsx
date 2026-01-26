@@ -13,6 +13,7 @@ function App() {
 
   const {
     users,
+    prevUsers,
     loading,
     total,
     page,
@@ -38,20 +39,18 @@ function App() {
     fetchUsers(sortField, sortOrder, newPage, activeFilters);
   }
 
-  if (loading) return <div>Loading...</div>;
-
   return (
     <div className="userTable">
       <h1 className="userTable__title">User Table</h1>
       {Object.keys(activeFilters).length > 0 && (
         <button
         onClick={clearFilters}
-        className="clear-filters-button"
+        className="userTable__clear-filters-button"
         >
           Очистить фильтры
         </button>
       )}
-
+      {loading && <div className="userTable__loading">Loading...</div>}
       <table>
         <TableHeader
           columns={userColumnItems}
@@ -65,7 +64,7 @@ function App() {
           handleFilter={handleFilter}
         />
         <tbody>
-        {users.map((user) => (
+        {(loading ? prevUsers : users).map((user) => (
           <TableRow
             key={user.id}
             user={user}
