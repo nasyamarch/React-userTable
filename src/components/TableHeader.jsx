@@ -1,3 +1,5 @@
+import FilterInput from './FilterInput'
+
 const TableHeader = ({
                        columns,
                        columnWidth,
@@ -6,6 +8,8 @@ const TableHeader = ({
                        startResize,
                        onResize,
                        endResize,
+                       filters,
+                       handleFilter,
                      }) => {
   return (
     <thead>
@@ -16,11 +20,11 @@ const TableHeader = ({
           style={columnWidth?.[key] ? {width: columnWidth[key]} : undefined}
         >
           <span
-          className="userTable__sort-label"
-          onClick={isSortable ? () => handleSort(key) : undefined}
+            className="userTable__sort-label"
+            onClick={isSortable ? () => handleSort(key) : undefined}
           >
           {label}
-          {isSortable && renderSortIcon(key)}
+            {isSortable && renderSortIcon(key)}
             </span>
 
           {isResizable && (
@@ -43,8 +47,12 @@ const TableHeader = ({
 
           {isSortable && (
             <div className="userTable__filter">
-
-
+              <FilterInput
+                field={key}
+                value={filters?.[key] || ''}
+                onFilterChange={handleFilter}
+                placeholder={`Filter ${label}`}
+              />
             </div>
           )}
         </th>
