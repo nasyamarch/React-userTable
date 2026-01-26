@@ -1,4 +1,4 @@
-import {useState, useCallback} from "react";
+import {useState, useCallback, useRef} from "react";
 
 const useFilter = (fetchUsers) => {
   const [filters, setFilters] = useState({
@@ -11,6 +11,7 @@ const useFilter = (fetchUsers) => {
   })
 
   const [activeFilters, setActiveFilters] = useState({})
+  const timeoutRef = useRef(null);
 
   const handleFilter = useCallback((field, value) => {
     setFilters(prev => ({
@@ -18,46 +19,64 @@ const useFilter = (fetchUsers) => {
       [field]: value
     }))
 
-    const newActiveFilters = {...activeFilters};
-    if (value.trim() === '') {
-      delete newActiveFilters[field];
-    } else {
-      newActiveFilters[field] = value.trim();
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
     }
 
-    setActiveFilters(newActiveFilters);
+    timeoutRef.current = setTimeout(() => {
+      setFilters(prevFilters => {
+        const currentValue = prevFilters[field];
+        const trimmedValue = currentValue.trim();
 
-    const timeoutId = setTimeout(() => {
-      fetchUsers(null, null, 1, newActiveFilters);
-    }, 300);
+        const updateActiveFilters = {...activeFilters};
 
-    return () => clearTimeout(timeoutId);
-  }, [activeFilters, fetchUsers])
+        if (trimmedValue === "") {
+          delete updateActiveFilters[field];
+        } else {
+          updateActiveFilters[field] = trimmedValue;
+        }
 
-const clearFilters = useCallback(() => {
-  setFilters({
-    lastName: '',
-    firstName: '',
-    maidenName: '',
-    age: '',
-    gender: '',
-    phone: '',
-  })
-  setActiveFilters({})
-  fetchUsers(null, null, 1)
-}, [fetchUsers])
+        setActiveFilters(updateActiveFilters);
 
-return {
-  filters,
-  activeFilters,
-  handleFilter,
-  clearFilters,
-}
+        fetchUsers(null, null, 1, newActiveFilters);
+
+        return prevFilters;
+      })
+    }, 300)
+  }, [fetchUsers, activeFilters])
+
+  const clearFilters = useCallback(() => {
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+
+    setFilters({
+      lastName: '',
+      firstName: '',
+      maidenName: '',
+      age: '',
+      gender: '',
+      phone: '',
+    })
+    setActiveFilters({})
+    fetchUsers(null, null, 1)
+  }, [fetchUsers])
+
+  const cleanup = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+  }, [])
+
+  return {
+    filters,
+    activeFilters,
+    handleFilter,
+    clearFilters,
+    cleanup,
+  }
 }
 
 export default useFilter;
-
-
-
-
-

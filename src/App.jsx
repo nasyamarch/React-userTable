@@ -6,7 +6,8 @@ import useUsers from "./api/useUsers.js";
 import useSort from "./api/useSort.js";
 import useFilter from "./api/useFilter.js";
 import renderSortIcon from "./hooks/renderSortIcon.js";
-import {useState} from "react";
+import {useEffect} from "react";
+import PaginationTable from "./components/PaginationTable.jsx";
 
 function App() {
 
@@ -21,11 +22,21 @@ function App() {
   } = useUsers();
 
   const {sortField, sortOrder, handleSort} = useSort(fetchUsers);
-  const {filters, activeFilters, handleFilter, clearFilters} = useFilter(fetchUsers);
+  const {filters, activeFilters, handleFilter, clearFilters, cleanup} = useFilter(fetchUsers);
   const {columnWidth, startResize, endResize, onResize} = useResizableColumns();
 
   const totalPage = Math.ceil(total / limit);
 
+  useEffect(() => {
+    return () => {
+      cleanup?.();
+    }
+  }, [cleanup]);
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    fetchUsers(sortField, sortOrder, newPage, activeFilters);
+  }
 
   if (loading) return <div>Loading...</div>;
 
@@ -62,46 +73,11 @@ function App() {
         ))}
         </tbody>
       </table>
-      <div>
-        <button
-        type="button"
-        disabled={page === 1}
-        onClick={() => {
-          const newPage = 1;
-          setPage(newPage);
-          fetchUsers(sortField, sortOrder, newPage);
-        }}
-        >
-          На первую страницу
-        </button>
-
-        <button
-          type="button"
-          disabled={page === 1}
-          onClick={() => {
-            const newPage = page - 1;
-            setPage(newPage);
-            fetchUsers(sortField, sortOrder, newPage);
-          }}
-        >
-          Назад
-        </button>
-
-        <span>
-          {page} / {totalPage || 1}
-        </span>
-        <button
-          type="button"
-          disabled={page >= totalPage}
-          onClick={() => {
-            const newPage = page + 1;
-            setPage(newPage);
-            fetchUsers(sortField, sortOrder, newPage);
-          }}
-        >
-          Вперед
-        </button>
-      </div>
+      <PaginationTable
+      page={page}
+      totalPage={totalPage}
+      onPageChange={handlePageChange}
+      />
     </div>
   )
 }
