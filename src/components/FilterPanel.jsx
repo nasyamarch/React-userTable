@@ -1,5 +1,5 @@
 
-const FilterPanel = ({activeFilters, currentFilterField, clearFilters}) => {
+const FilterPanel = ({activeFilters, clearFilters}) => {
 
   if (!Object.keys(activeFilters).length) return null
   return (
