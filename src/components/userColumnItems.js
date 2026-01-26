@@ -13,7 +13,7 @@ export const userColumnItems = [
   },
   {
     key: 'maidenName',
-    label: 'Middle name',
+    label: 'Maiden name',
     isSortable: true,
     isResizable: true,
   },

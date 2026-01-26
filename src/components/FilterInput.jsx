@@ -1,25 +1,20 @@
-
 const FilterInput = ({
-  field,
-  value,
-  onFilterChange,
-  placeholder = "Фильтр...",
-}) => {
+                       field,
+                       value,
+                       onFilterChange,
+                       placeholder,
+                     }) => {
   const handleChange = (e) => {
     onFilterChange(field, e.target.value);
   }
   return (
-    <div
-    className="filter-input">
-      <input
+    <input
       type="text"
       value={value}
       onChange={handleChange}
-      placeholder={placeholder}
+      placeholder={placeholder || "Filter..."}
       className="filter-field"
-      />
-
-    </div>
+    />
   )
 }
 

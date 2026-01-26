@@ -8,7 +8,7 @@ const TableHeader = ({
                        startResize,
                        onResize,
                        endResize,
-                       filters,
+                       activeFilters,
                        handleFilter,
                      }) => {
   return (
@@ -49,7 +49,7 @@ const TableHeader = ({
             <div className="userTable__filter">
               <FilterInput
                 field={key}
-                value={filters?.[key] || ''}
+                value={activeFilters?.[key] || ''}
                 onFilterChange={handleFilter}
                 placeholder={`Filter ${label}`}
               />

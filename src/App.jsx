@@ -8,6 +8,7 @@ import useFilter from "./api/useFilter.js";
 import renderSortIcon from "./hooks/renderSortIcon.js";
 import {useEffect} from "react";
 import PaginationTable from "./components/PaginationTable.jsx";
+import FilterPanel from "./components/FilterPanel.jsx";
 
 function App() {
 
@@ -23,15 +24,13 @@ function App() {
   } = useUsers();
 
   const {sortField, sortOrder, handleSort} = useSort(fetchUsers);
-  const {filters, activeFilters, handleFilter, clearFilters, cleanup} = useFilter(fetchUsers);
+  const {activeFilters, handleFilter, clearFilters, cleanup} = useFilter(fetchUsers);
   const {columnWidth, startResize, endResize, onResize} = useResizableColumns();
 
   const totalPage = Math.ceil(total / limit);
 
-  useEffect(() => {
-    return () => {
+  useEffect(() => () => {
       cleanup?.();
-    }
   }, [cleanup]);
 
   const handlePageChange = (newPage) => {
@@ -39,18 +38,18 @@ function App() {
     fetchUsers(sortField, sortOrder, newPage, activeFilters);
   }
 
+
   return (
     <div className="userTable">
       <h1 className="userTable__title">User Table</h1>
-      {Object.keys(activeFilters).length > 0 && (
-        <button
-        onClick={clearFilters}
-        className="userTable__clear-filters-button"
-        >
-          Очистить фильтры
-        </button>
-      )}
+
+      <FilterPanel
+        activeFilters={activeFilters}
+        clearFilters={clearFilters}
+      />
+
       {loading && <div className="userTable__loading">Loading...</div>}
+
       <table>
         <TableHeader
           columns={userColumnItems}
@@ -60,7 +59,7 @@ function App() {
           startResize={startResize}
           onResize={onResize}
           endResize={endResize}
-          filters={filters}
+          activeFilters={activeFilters}
           handleFilter={handleFilter}
         />
         <tbody>
@@ -73,9 +72,9 @@ function App() {
         </tbody>
       </table>
       <PaginationTable
-      page={page}
-      totalPage={totalPage}
-      onPageChange={handlePageChange}
+        page={page}
+        totalPage={totalPage}
+        onPageChange={handlePageChange}
       />
     </div>
   )
